@@ -11,6 +11,7 @@ import (
 	"apiproject/controllers"
 
 	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/context"
 )
 
 func init() {
@@ -35,9 +36,7 @@ func init() {
 		),
 	)
 	beego.AddNamespace(ns)*/
-	
-	beego.InsertFilter()
-	beego.BeforeRouter
+
 	
 	beego.Router("/v1/user", &controllers.UserController{})
 	beego.Router("/v1/worker/querybagreq/:workerid/:token", &controllers.WorkerController{}, "get:Querybagreq")
@@ -49,4 +48,19 @@ func init() {
 	beego.Router("/v1/worker/postworkerinfo", &controllers.WorkerController{}, "*:PostWorkerInfo")
 	beego.Router("/v1/worker/postworkerinfo1/:workerid/:token", &controllers.WorkerController{}, "post:PostWorkerInfo1")
 	
+	beego.InsertFilter("/v1/worker/getworkerid", beego.BeforeRouter, FilterUser)
 }
+
+
+	var FilterUser = func(ctx *context.Context) {
+	    /*_, ok := ctx.Input.Session("uid").(int)
+	    if !ok && ctx.Request.RequestURI != "/login" {
+	        ctx.Redirect(302, "/login")
+	    }*/
+		url := ctx.Input.Url()
+		workerId := ctx.Request.URL.Query().Get("workerid")
+		token := ctx.Request.URL.Query().Get("token")
+		
+		beego.Debug("1234567890:"+ url, workerId, token)
+}
+
